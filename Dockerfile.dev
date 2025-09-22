@@ -1,0 +1,5 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY . .
+RUN pip install -e .[dev]
+CMD ["uvicorn", "text_rag.api:app", "--host", "0.0.0.0", "--port", "8080"]

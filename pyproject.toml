@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "text-rag"
+version = "0.1.0"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "boto3",
+    "opensearch-py",
+    "requests-aws4auth",
+    "structlog",
+    "pydantic",
+    "aioredis"
+]
