@@ -1,35 +1,35 @@
 version: "3.9"
 services:
-  localstack:
-    image: localstack/localstack:latest
-    container_name: localstack
-    ports:
-      - "4566:4566"
-      - "4510-4559:4510-4559"
-    environment:
-      - SERVICES=s3,es
-      - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
-    volumes:
-      - "./.localstack:/tmp/localstack"
+#  localstack:
+#    image: localstack/localstack:latest
+#    container_name: localstack
+#    ports:
+#      - "4566:4566"
+#      - "4510-4559:4510-4559"
+#    environment:
+#      - SERVICES=s3,es
+#      - DEBUG=1
+#      - DATA_DIR=/tmp/localstack/data
+#    volumes:
+#      - "./.localstack:/tmp/localstack"
 
-  opensearch:
-    image: opensearchproject/opensearch:2.11.0
-    container_name: opensearch
-    environment:
-      - discovery.type=single-node
-      - plugins.security.disabled=true
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - "9200:9200"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+#  opensearch:
+#    image: opensearchproject/opensearch:2.11.0
+#    container_name: opensearch
+#    environment:
+#      - discovery.type=single-node
+#      - plugins.security.disabled=true
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    ports:
+#      - "9200:9200"
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
 
   redis:
     image: redis:7-alpine
@@ -43,18 +43,18 @@ services:
       timeout: 5s
       retries: 5
 
-  rag-app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: rag-app
-    depends_on:
-      - localstack
-      - opensearch
-      - redis
-    environment:
-      - APP_ENV=localstack
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./src:/app/src
+#  rag-app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.dev
+#    container_name: rag-app
+#    depends_on:
+#      - localstack
+#      - opensearch
+#      - redis
+#    environment:
+#      - APP_ENV=localstack
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./src:/app/src

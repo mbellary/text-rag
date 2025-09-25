@@ -1,11 +1,13 @@
 import asyncio
 from text_rag.retriever import vector_search
-from text_rag.reranker import rerank
+from text_rag.reranker import invoke_reranking_model
 from text_rag.generator import generate_answer
-from text_rag.utils import embed_text
+from text_rag.utils import invoke_embedding_model
 from text_rag.config import RETRIEVAL_K, RERANK_TOP_N
 from text_rag.cache import get_cached_response, set_cached_response
+from text_rag.logger import get_logger
 
+logger = get_logger("text_rag.worker")
 
 async def handle_query(query: str, k: int = None, n: int = None, do_reflection: bool = False):
     #check cache
@@ -17,16 +19,17 @@ async def handle_query(query: str, k: int = None, n: int = None, do_reflection: 
     n = n or RERANK_TOP_N
 
     #embedding
-    query_embedding = await embed_text(query)
+    query_embedding = await invoke_embedding_model(query)
 
     #retrieve top-k
-    raw_candidates = await asyncio.to_thread(vector_search, query_embedding, k)
+    raw_candidates = await vector_search(query_embedding, k)
     if not raw_candidates:
+        logger.info("No documents found")
         return {"answer": "No documents found.", "sources": []}
-    candidate_texts = [c['chunk'] for c in raw_candidates]
+    #candidate_texts = [c['chunk'] for c in raw_candidates]
 
     #rerank
-    ranked_indices = await asyncio.to_thread(rerank, query, candidate_texts, n)
+    ranked_indices = await asyncio.to_thread(invoke_reranking_model, query, raw_candidates, n)
     top_chunks = [raw_candidates[i] for i in ranked_indices]
 
     #generate

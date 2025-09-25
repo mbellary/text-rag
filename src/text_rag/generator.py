@@ -1,6 +1,9 @@
 import json
 from text_rag.aws_clients import bedrock_client
-from text_rag.config import BEDROCK_COMPLETION_MODEL
+from text_rag.config import COMPLETION_MODEL
+from text_rag.logger import get_logger
+
+logger = get_logger("text_rag.generator")
 
 PROMPT_TEMPLATE = """
 You are a helpful assistant. Use the following context to answer the question.
@@ -20,13 +23,15 @@ def generate_answer(question: str, context_chunks: list) -> str:
     prompt = PROMPT_TEMPLATE.format(context=context_text, question=question)
     try:
         resp = client.invoke_model(
-            modelId=BEDROCK_COMPLETION_MODEL,
+            modelId=COMPLETION_MODEL,
             contentType="application/json",
             accept="application/json",
             body=json.dumps({"inputText": prompt, "maxTokens": 512})
         )
         payload = json.loads(resp['body'].read())
         answer = payload.get('outputText') or payload.get('choices', [{}])[0].get('text')
-    except Exception:
+        logger.info(f"successfully generated answer.")
+    except Exception as e:
         answer = "[error] failed to generate answer"
+        logger.error(f"failed to generate answer: {e}")
     return answer

@@ -1,6 +1,6 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+#[build-system]
+#requires = ["setuptools", "wheel"]
+#build-backend = "setuptools.build_meta"
 
 [project]
 name = "text-rag"
@@ -13,5 +13,20 @@ dependencies = [
     "requests-aws4auth",
     "structlog",
     "pydantic",
-    "aioredis"
+    "python-dotenv",
+    "setuptools>=80.9.0",
+    "redis>=6.4.0",
+    "redis-cli>=1.0.1",
+    "openai>=1.109.1",
+    "aiohttp>=3.12.15",
 ]
+
+[project.scripts]
+rag_api = "text_rag.api:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+packages = ["src/text_rag"]

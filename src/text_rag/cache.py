@@ -1,8 +1,8 @@
-import aioredis
 import hashlib
 import json
 from text_rag.config import REDIS_HOST, REDIS_PORT
 from text_rag.logger import get_logger
+from redis import asyncio as aioredis
 
 logger = get_logger("text_rag.cache")
 

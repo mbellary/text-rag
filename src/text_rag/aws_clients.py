@@ -6,9 +6,11 @@ from text_rag.config import (
                             AWS_SECRET_ACCESS_KEY,
                             LOCALSTACK_URL,
                             APP_ENV,
-                            OPENSEARCH_ENDPOINT)
+                            OPENSEARCH_HOST)
 from typing import Any
 from text_rag.logger import get_logger
+from opensearchpy import OpenSearch, RequestsHttpConnection
+from requests_aws4auth import AWS4Auth
 
 logger = get_logger("text_rag.clients")
 
@@ -48,8 +50,7 @@ def bedrock_client() -> Any:
 
 
 def opensearch_client():
-    from opensearchpy import OpenSearch, RequestsHttpConnection
-    from requests_aws4auth import AWS4Auth
+
 
     credentials = _session.get_credentials()
     awsauth = AWS4Auth(region=AWS_REGION,
@@ -57,7 +58,7 @@ def opensearch_client():
                         refreshable_credentials=credentials)
 
     client = OpenSearch(
-        hosts=[{"host": OPENSEARCH_ENDPOINT.replace("https://", "").replace("http://", ""), "port": 443}],
+        hosts={"host": OPENSEARCH_HOST.replace("https://", "").replace("http://", ""), "port": 443},
         http_auth=awsauth,
         use_ssl=True,
         verify_certs=True,

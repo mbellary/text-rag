@@ -1,9 +1,9 @@
 import os
 from dotenv import load_dotenv, dotenv_values
-from text_embedder.logger import get_logger
+from text_rag.logger import get_logger
 from pathlib import Path
 
-logger = get_logger("enqueue_worker.config")
+logger = get_logger("text_rag.config")
 
 PACKAGE_DIR = Path(__file__).resolve().parent
 
@@ -31,6 +31,11 @@ AWS_ACCESS_KEY_ID=_env("AWS_ACCESS_KEY_ID", None) #if use_localstack else None
 AWS_SECRET_ACCESS_KEY=_env("AWS_SECRET_ACCESS_KEY", None) #if use_localstack else None
 LOCALSTACK_URL=_env("LOCALSTACK_URL", None) #if use_localstack else None
 
+# Model Provider
+MODEL_PROVIDER = _env("MODEL_PROVIDER", "bedrock")
+
+# OPEN API Key
+OPENAI_API_KEY = _env("OPENAI_API_KEY", "")
 
 # Mistral Credentials
 MISTRAL_API_KEY=_env("MISTRAL_API_KEY", "")
@@ -89,20 +94,26 @@ JSONL_MAX_CHUNK_SIZE_MB = int(_env("JSONL_MAX_CHUNK_SIZE_MB", "40"))
 JSONL_MAX_NUM_PAGES = int(_env("JSONL_MAX_NUM_PAGES", "950"))
 
 # FAST API
-HOST= _env("HOST", "0.0.0.0")
-PORT= int(_env("PORT", "8080"))
+API_HOST= _env("HOST", "0.0.0.0")
+API_PORT= int(_env("PORT", "8080"))
 
 #OpenSearch
-OPENSEARCH_ENDPOINT= _env("OPENSEARCH_ENDPOINT", "")
+OPENSEARCH_HOST= _env("OPENSEARCH_HOST", "")
 OPENSEARCH_INDEX= _env("OPENSEARCH_INDEX", "text-embeds")
 RETRIEVAL_K = int(_env("RETRIEVAL_K", "30"))
 RERANK_TOP_N= int(_env("RERANK_TOP_N", "5"))
 
+#Embeddings Model
+EMBEDDING_MODEL= _env("EMBEDDING_MODEL", "amazon.titan-embed-text-v2:0")
+EMBEDDING_OUTPUT_DIM = _env("EMBEDDING_OUTPUT_DIM", "1024")
+RERANK_MODEL= _env("RERANK_MODEL", "amazon.titan-rerank")
+COMPLETION_MODEL = _env("COMPLETION_MODEL", "amazon.titan-complete")
+
 #Bedrock
-BEDROCK_CLIENT_NAME= _env("BEDROCK_CLIENT_NAME", "bedrock")
-BEDROCK_EMBEDDING_MODEL= _env("BEDROCK_EMBEDDING_MODEL", "amazon.titan-embedding")
-BEDROCK_RERANK_MODEL=_env("BEDROCK_RERANK_MODEL" ,"amazon.titan-rerank")
-BEDROCK_COMPLETION_MODEL=_env("BEDROCK_COMPLETION_MODEL", "amazon.titan-complete")
+# BEDROCK_CLIENT_NAME= _env("BEDROCK_CLIENT_NAME", "bedrock")
+# BEDROCK_EMBEDDING_MODEL= _env("BEDROCK_EMBEDDING_MODEL", "amazon.titan-embedding")
+# BEDROCK_RERANK_MODEL=_env("BEDROCK_RERANK_MODEL" ,"amazon.titan-rerank")
+# BEDROCK_COMPLETION_MODEL=_env("BEDROCK_COMPLETION_MODEL", "amazon.titan-complete")
 
 #Redis
 REDIS_HOST= _env("REDIS_HOST", "redis.localstack")
