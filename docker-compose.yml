@@ -43,18 +43,18 @@ services:
       timeout: 5s
       retries: 5
 
-#  rag-app:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile.dev
-#    container_name: rag-app
-#    depends_on:
+  rag-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: rag-app
+    depends_on:
 #      - localstack
 #      - opensearch
-#      - redis
-#    environment:
-#      - APP_ENV=localstack
-#    ports:
-#      - "8080:8080"
-#    volumes:
-#      - ./src:/app/src
+      - redis
+    environment:
+      - APP_ENV=localstack
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/app/src

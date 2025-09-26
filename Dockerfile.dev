@@ -1,6 +1,34 @@
-FROM python:3.11-slim
-WORKDIR /app
-COPY . .
-RUN pip install -e .[dev]
-#CMD ["uvicorn", "text_rag.api:app", "--host", "0.0.0.0", "--port", "8080"]
+FROM python:3.13-slim AS dev
+
+WORKDIR /text-rag
+
+# Install system deps for PDF + parquet processing
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libxml2-dev \
+    libxslt-dev \
+    libz-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv package manager
+RUN pip install --no-cache-dir uv
+
+# Copy pyproject.toml (and optional lock file)
+COPY pyproject.toml uv.lock* README.md ./
+
+# Install dependencies (uv automatically respects pyproject + lockfile if present)
+RUN if [ -f uv.lock ]; then \
+      uv sync --frozen --no-install-project; \
+    else \
+      uv pip install --system . --no-deps; \
+    fi
+
+
+# Copy project source
+COPY src ./src
+
+# Install the package itself (creates "worker" CLI script)
+RUN uv pip install --system --editable .
+
+# Default entrypoint defined in pyproject.toml: [project.scripts]
 ENTRYPOINT ["rag_api"]
