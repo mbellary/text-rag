@@ -1,7 +1,7 @@
 import asyncio
 from text_rag.retriever import vector_search
 from text_rag.reranker import invoke_reranking_model
-from text_rag.generator import generate_answer
+from text_rag.generator import invoke_generator_model
 from text_rag.utils import invoke_embedding_model
 from text_rag.config import RETRIEVAL_K, RERANK_TOP_N
 from text_rag.cache import get_cached_response, set_cached_response
@@ -29,10 +29,10 @@ async def handle_query(query: str, k: int = None, n: int = None, do_reflection: 
     #candidate_texts = [c['chunk'] for c in raw_candidates]
 
     #rerank
-    ranked_indices = await asyncio.to_thread(invoke_reranking_model, query, raw_candidates, n)
+    ranked_indices = await invoke_reranking_model(query, raw_candidates, n)
     top_chunks = [raw_candidates[i] for i in ranked_indices]
 
     #generate
-    answer = await asyncio.to_thread(generate_answer, query, top_chunks)
+    answer = await invoke_generator_model(query, top_chunks)
 
-    return {"answer": answer, "sources": [{"id": c['id'], "score": c['score'], "text": c['chunk']} for c in top_chunks]}
+    return {"answer": answer, "sources": [{"doc_id": c['doc_id'], "score": c['score'], "text": c['text']} for c in top_chunks]}
